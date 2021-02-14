@@ -5,6 +5,7 @@ import glob
 from math import copysign, log10
 
 class objectDetect():
+    #input path image to crop icon card in center. This will save image cropped
     def createImgMatch(self,folderPath):
         listImg = glob.glob(folderPath+'/*.jpg')
         t = 0
@@ -40,7 +41,8 @@ class objectDetect():
                     cv2.imwrite(str(t)+'.jpg',img[y:y+h, x:x+w])
                     print('x: '+str(x)+', y: '+str(y)+', h: '+str(h)+', w: '+str(w)+', t: '+str(t))
                     t+=1
-    
+
+    #input path image cropped. This medthod will return array of image
     def loadImgToList(self,plus,revert,stop):
         # plus = r'./newData/Plus/'
         # revert = r'./newData/Revert/'
@@ -55,9 +57,11 @@ class objectDetect():
         revert = [cv2.imread(i,cv2.IMREAD_GRAYSCALE) for i in glob.glob(revert+'*.jpg')]
         return [plus,revert,stop]
     
+
+    #input frame or image. This medthod will return rectangel of center card detected to array and input text to img
     def createImg(self,img):
         img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-        _,binary = cv2.threshold(img_gray,120,255,cv2.THRESH_BINARY)
+        _,binary = cv2.threshold(img_gray,200,255,cv2.THRESH_BINARY)
         # cv2.imshow('bin',binary)
         cnts,_ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         imgList = []
@@ -87,7 +91,9 @@ class objectDetect():
                 
         return imgList,img
     
-    def matchShapes(self,imgList,dataList):
+
+    #This will check matchshape of image input and data image and return obj matchshape and count obj
+    def matchShape(self,imgList,dataList):
         ref = []
         count = [0,0,0]
         for i in imgList:
@@ -129,6 +135,7 @@ class objectDetect():
             
         return ref,count
 
+    #This will put text shape of obj to img
     def showImg(self,img,imgMatch):
         for i in imgMatch:
             y,x = i[3]
